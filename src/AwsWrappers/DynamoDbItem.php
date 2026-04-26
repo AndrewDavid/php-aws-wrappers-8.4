@@ -25,16 +25,16 @@ class DynamoDbItem implements \ArrayAccess
     
     protected $data = [];
     
-    public static function createFromTypedArray(array $typed_value)
-    {
+    public static function createFromTypedArray(array $typed_value): DynamoDbItem
+	{
         $ret       = new static;
         $ret->data = $typed_value;
         
         return $ret;
     }
     
-    public static function createFromArray(array $normal_value, $known_types = [])
-    {
+    public static function createFromArray(array $normal_value, $known_types = []): DynamoDbItem
+	{
         $ret = new static;
         foreach ($normal_value as $k => &$v) {
             $ret->data[$k] = static::toTypedValue($v, isset($known_types[$k]) ? $known_types[$k] : null);
@@ -90,8 +90,8 @@ class DynamoDbItem implements \ArrayAccess
         }
     }
     
-    protected static function toTypedValue(&$v, $type = null)
-    {
+    protected static function toTypedValue(&$v, $type = null): array
+	{
         if (!$type) {
             $type = static::determineAttributeType($v);
         }
@@ -157,8 +157,8 @@ class DynamoDbItem implements \ArrayAccess
         }
     }
     
-    protected static function determineAttributeType(&$v)
-    {
+    protected static function determineAttributeType(&$v): string
+	{
         if (is_string($v)) {
             return self::ATTRIBUTE_TYPE_STRING;
         }
@@ -188,8 +188,8 @@ class DynamoDbItem implements \ArrayAccess
         }
     }
     
-    public function toArray()
-    {
+    public function toArray(): array
+	{
         $ret = [];
         foreach ($this->data as $k => &$v) {
             $ret[$k] = static::toUntypedValue($v);
@@ -201,8 +201,8 @@ class DynamoDbItem implements \ArrayAccess
     /**
      * @return mixed
      */
-    public function getData()
-    {
+    public function getData(): mixed
+	{
         return $this->data;
     }
     
@@ -221,7 +221,7 @@ class DynamoDbItem implements \ArrayAccess
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset):bool
     {
         return array_key_exists($offset, $this->data);
     }
@@ -238,8 +238,8 @@ class DynamoDbItem implements \ArrayAccess
      * @return mixed Can return all value types.
      * @since 5.0.0
      */
-    public function offsetGet($offset)
-    {
+    public function offsetGet($offset): mixed
+	{
         if (!array_key_exists($offset, $this->data)) {
             throw new \OutOfBoundsException("Attribute $offset does not exist in DynamoDbItem!");
         }
@@ -262,8 +262,8 @@ class DynamoDbItem implements \ArrayAccess
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value)
-    {
+    public function offsetSet(mixed $offset, mixed $value): void
+	{
         $this->data[$offset] = static::toTypedValue($value);
     }
     
@@ -279,8 +279,8 @@ class DynamoDbItem implements \ArrayAccess
      * @return void
      * @since 5.0.0
      */
-    public function offsetUnset($offset)
-    {
+    public function offsetUnset($offset): void
+	{
         if (!array_key_exists($offset, $this->data)) {
             throw new \OutOfBoundsException("Attribute $offset does not exist in DynamoDbItem!");
         }
